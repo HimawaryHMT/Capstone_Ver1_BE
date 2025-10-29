@@ -2,7 +2,7 @@
 import bcrypt from 'bcryptjs';
 
 // Sinh hash từ mật khẩu plaintext
-const plaintext = '1';
+const plaintext = '123';
 const saltRounds = 10; // phổ biến là 10 hoặc 12
 
 bcrypt.genSalt(saltRounds, (err, salt) => {

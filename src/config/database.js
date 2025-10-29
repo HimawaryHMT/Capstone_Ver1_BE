@@ -5,7 +5,7 @@ const poolMySQL = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: 'MinhThang@2022',
-  database: 'capstone_ver1',
+  database: 'elderly_monitoring',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
