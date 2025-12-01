@@ -2,18 +2,22 @@ import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
+  console.log("🔑 Authorization header nhận được:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Không có token hoặc token không hợp lệ" });
+    return res.status(401).json({ message: "Missing or invalid token format" });
   }
 
   const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Gắn thông tin user (ví dụ: user_id) vào req
-    next(); // Cho phép đi tiếp đến controller
+    req.user = decoded;
+    next();
   } catch (err) {
-    return res.status(403).json({ message: "Token không hợp lệ hoặc đã hết hạn" });
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token đã hết hạn" });
+    }
+    return res.status(403).json({ message: "Token không hợp lệ" });
   }
 };
