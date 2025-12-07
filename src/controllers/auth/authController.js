@@ -16,10 +16,21 @@ const login = async (req, res) => {
         // Kiểm tra nếu là email hay số điện thoại
         const isEmail = identifier.includes('@');
         const query = isEmail
-            ? 'SELECT * FROM users WHERE email = ?'
-            : 'SELECT * FROM users WHERE phone = ?';
+  ? `
+    SELECT u.*, e.elderly_id 
+    FROM users u
+    LEFT JOIN elderly_users e ON u.user_id = e.user_id 
+    WHERE u.email = ?
+  `
+  : `
+    SELECT u.*, e.elderly_id 
+    FROM users u
+    LEFT JOIN elderly_users e ON u.user_id = e.user_id 
+    WHERE u.phone = ?
+  `;
 
         const [rows] = await poolMySQL.execute(query, [identifier]);
+        console.log("👉 Kết quả JOIN user + elderly:", rows);
 
         // Kiểm tra xem user có tồn tại không
         if (rows.length === 0) {
@@ -39,6 +50,7 @@ const login = async (req, res) => {
         // Tạo token (đừng đưa password_hash vào payload)
     const payload = {
       user_id: user.user_id , // tuỳ cột khoá chính của bạn
+      elderly_id: user.elderly_id,
       email: user.email,
       phone: user.phone,
     };
